@@ -5,6 +5,7 @@ using UnityEngine;
 public class EnemyBehaviour : MonoBehaviour
 {
     private const float speed = 5f;
+    private const int damage = 20;
     private int index = 0;
 
     // Start is called before the first frame update
@@ -24,7 +25,7 @@ public class EnemyBehaviour : MonoBehaviour
     {
         if (collision.gameObject.CompareTag("Player"))
         {
-            collision.gameObject.GetComponent<Player>().TakeDamage();
+            collision.gameObject.GetComponent<Player>().TakeDamage(damage);
         }
     }
 

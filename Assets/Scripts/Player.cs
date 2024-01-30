@@ -38,6 +38,11 @@ public class Player : MonoBehaviour
     private Transform rayCastCheck;
 
     [SerializeField]
+    private ParticleSystem rain;
+    [SerializeField]
+    private ParticleSystem dust;
+
+    [SerializeField]
     bool hasWeapon = false;
     private bool isShoot = false;
 
@@ -45,12 +50,16 @@ public class Player : MonoBehaviour
     public Text coinText;
     public Text countLifesText;
     public int countLifes = 3;
+    public int health = 100;
+
+    public HealthMananger healthMananger;
 
     public Image weapomImage;
     void Start()
     {
         anim = GetComponent<Animator>();
         spt = GetComponent<SpriteRenderer>();
+        healthMananger.SetMaxHealth(health);
         this.isJumping = false;
     }
 
@@ -76,11 +85,33 @@ public class Player : MonoBehaviour
             }
         }
     }
-
-    public void TakeDamage()
+    public void CallDust() {
+        dust.Play();
+    }
+    public void CallRain()
     {
-        countLifes--;
-        countLifesText.text = countLifes.ToString();
+        rain.Play();
+    }
+    public void TakeDamage(int damage)
+    {
+
+        health -= damage;
+
+        if (health <= 0)
+        {
+            health = 0;
+            countLifes--;
+            if (countLifes <=0)
+            {
+                print("GameOVer");
+            }
+            else
+            {
+                health = 100;
+            }
+            countLifesText.text = countLifes.ToString();
+        }
+        healthMananger.SetHealth(health);
     }
     public void SetWeapon()
     {
@@ -111,6 +142,7 @@ public class Player : MonoBehaviour
         {
             if (isGround && !isShoot)
             {
+                CallDust();
                 spt.flipX = false;
                 anim.Play("MariaWalkingWeapon");
             }
@@ -119,6 +151,7 @@ public class Player : MonoBehaviour
         {
             if (isGround && !isShoot)
             {
+                CallDust();
                 spt.flipX = true;
                 anim.Play("MariaWalkingWeapon");
             }
@@ -133,6 +166,7 @@ public class Player : MonoBehaviour
 
         if (Input.GetButtonDown("Jump") && isGround)
         {
+            CallDust();
             isJumping = true;
         }
         if (!isGround && !isShoot)
@@ -147,6 +181,7 @@ public class Player : MonoBehaviour
         {
             if (isGround)
             {
+                CallDust();
                 spt.flipX = false;
                 anim.Play("MariaWalking");
             }
@@ -155,6 +190,7 @@ public class Player : MonoBehaviour
         {
             if (isGround)
             {
+                CallDust();
                 spt.flipX = true;
                 anim.Play("MariaWalking");
             }
@@ -169,6 +205,7 @@ public class Player : MonoBehaviour
 
         if (Input.GetButtonDown("Jump") && isGround)
         {
+            CallDust();
             isJumping = true;
         }
         if (!isGround)
@@ -176,6 +213,7 @@ public class Player : MonoBehaviour
             anim.Play("MariaJump");
         }
     }
+
     private void FixedUpdate()
     {
         Move();
